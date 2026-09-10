@@ -30,6 +30,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => ['required', 'string', 'email'],
             'password' => ['required', 'string'],
+            'role' => ['required', 'string', 'in:admin,guru,siswa,orang_tua'],
         ];
     }
 
@@ -47,6 +48,17 @@ class LoginRequest extends FormRequest
 
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
+            ]);
+        }
+
+        // Validate role matches user's role
+        $user = Auth::user();
+        if ($user && $user->role !== $this->input('role')) {
+            Auth::logout();
+            RateLimiter::hit($this->throttleKey());
+            throw ValidationException::withMessages([
+                'role' => 'Role yang dipilih tidak sesuai dengan akun Anda.',
+                'email' => 'Role tidak sesuai.',
             ]);
         }
 
