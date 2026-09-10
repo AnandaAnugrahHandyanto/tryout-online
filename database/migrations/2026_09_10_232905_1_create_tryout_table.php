@@ -1,0 +1,22 @@
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration {
+    public function up(): void {
+        Schema::create('tryout', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama');
+            $table->foreignId('mapel_id')->constrained('mata_pelajaran')->cascadeOnDelete();
+            $table->foreignId('guru_id')->constrained('guru')->cascadeOnDelete();
+            $table->unsignedInteger('jumlah_soal')->default(0);
+            $table->unsignedInteger('durasi_menit');
+            $table->dateTime('tanggal_mulai');
+            $table->dateTime('tanggal_selesai');
+            $table->enum('status', ['draft','aktif','selesai'])->default('draft');
+            $table->timestamps();
+        });
+    }
+    public function down(): void { Schema::dropIfExists('tryout'); }
+};
