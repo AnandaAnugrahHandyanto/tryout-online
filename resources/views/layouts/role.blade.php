@@ -55,6 +55,11 @@
                 <p class="text-xs text-[#64748B]">{{ Auth::user()->name }} • {{ ucfirst(str_replace('_',' ', Auth::user()->role)) }}</p>
             </div>
             <div class="flex items-center gap-3">
+                @php $hUnread = \App\Models\Notifikasi::where('user_id', auth()->id())->where('sudah_dibaca', false)->count(); @endphp
+                <a href="{{ route('notifikasi.index') }}" class="relative w-9 h-9 grid place-items-center bg-white border border-[#E2E8F0] rounded-full hover:bg-[#F8FAFC]">
+                    <span class="text-sm">🔔</span>
+                    @if($hUnread>0)<span class="absolute -top-1 -right-1 bg-[#EF4444] text-white text-[10px] font-bold min-w-[18px] h-[18px] grid place-items-center rounded-full px-1">{{ $hUnread > 9 ? '9+' : $hUnread }}</span>@endif
+                </a>
                 <div class="hidden sm:flex items-center gap-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded-full px-3 py-1.5">
                     <span class="w-6 h-6 rounded-full bg-[#1E3A8A] flex items-center justify-center text-white text-[10px] font-bold">{{ substr(Auth::user()->name,0,1) }}</span>
                     <span class="text-xs font-medium text-[#0F172A]">{{ Auth::user()->name }}</span>
@@ -75,12 +80,18 @@
 
         {{-- Bottom nav mobile --}}
         <div class="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t flex justify-around py-2 z-20">
-            @foreach(array_slice($menus, 0, 4) as $item)
+            @foreach(array_slice($menus, 0, 3) as $item)
                 <a href="{{ $item['url'] }}" class="flex flex-col items-center gap-1 {{ $item['active'] ? 'text-[#1E3A8A]' : 'text-gray-400' }}">
                     <span class="w-5 h-5 rounded-full {{ $item['active'] ? 'bg-[#1E3A8A]' : 'bg-gray-300' }}"></span>
                     <span class="text-[10px]">{{ $item['label'] }}</span>
                 </a>
             @endforeach
+            @php $bUnread = \App\Models\Notifikasi::where('user_id', auth()->id())->where('sudah_dibaca', false)->count(); $bActive = request()->routeIs('notifikasi.*'); @endphp
+            <a href="{{ route('notifikasi.index') }}" class="flex flex-col items-center gap-1 {{ $bActive ? 'text-[#1E3A8A]' : 'text-gray-400' }} relative">
+                <span class="w-5 h-5 rounded-full {{ $bActive ? 'bg-[#1E3A8A]' : 'bg-gray-300' }}"></span>
+                @if($bUnread>0)<span class="absolute -top-1 right-3 bg-[#EF4444] text-white text-[9px] font-bold min-w-[14px] h-[14px] grid place-items-center rounded-full px-1">{{ $bUnread }}</span>@endif
+                <span class="text-[10px]">Notifikasi</span>
+            </a>
         </div>
 
         <main class="flex-1 p-4 lg:p-8 pb-20 lg:pb-8">
