@@ -43,6 +43,14 @@ Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(f
 
 Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->name('siswa.')->group(function () {
     Route::get('/dashboard', fn() => view('siswa.dashboard'))->name('dashboard');
+    Route::get('/tryout', [\App\Http\Controllers\Siswa\TryoutController::class, 'index'])->name('tryout.index');
+    Route::post('/tryout/{tryout}/start', [\App\Http\Controllers\Siswa\TryoutController::class, 'start'])->name('tryout.start');
+    Route::get('/tryout/{tryout}/exam', [\App\Http\Controllers\Siswa\TryoutController::class, 'exam'])->name('tryout.exam');
+    Route::post('/tryout/{tryout}/save', [\App\Http\Controllers\Siswa\TryoutController::class, 'save'])->name('tryout.save');
+    Route::post('/tryout/{tryout}/ragu', [\App\Http\Controllers\Siswa\TryoutController::class, 'toggleRagu'])->name('tryout.ragu');
+    Route::post('/tryout/{tryout}/submit', [\App\Http\Controllers\Siswa\TryoutController::class, 'submit'])->name('tryout.submit');
+    Route::get('/tryout/{tryout}/hasil', [\App\Http\Controllers\Siswa\TryoutController::class, 'hasil'])->name('tryout.hasil');
+    Route::get('/tryout/{tryout}/ranking', [\App\Http\Controllers\Siswa\TryoutController::class, 'ranking'])->name('tryout.ranking');
 });
 
 Route::middleware(['auth', 'role:orang_tua'])->prefix('orang-tua')->name('orang-tua.')->group(function () {
