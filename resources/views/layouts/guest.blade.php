@@ -2,8 +2,15 @@
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        <meta name="theme-color" content="#1E3A8A">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-title" content="AkademikPro">
+        <meta name="description" content="AkademikPro — Login Tryout Online">
+        <link rel="manifest" href="/manifest.json">
+        <link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192x192.png">
+        <link rel="apple-touch-icon" href="/icons/icon-180x180.png">
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 

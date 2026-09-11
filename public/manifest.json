@@ -1,0 +1,46 @@
+{
+  "name": "AkademikPro - Tryout Online",
+  "short_name": "AkademikPro",
+  "description": "Sistem Akademik Tryout Online — Tryout, Nilai, dan Monitoring Orang Tua",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay", "standalone", "browser"],
+  "background_color": "#F8FAFC",
+  "theme_color": "#1E3A8A",
+  "orientation": "portrait-primary",
+  "categories": ["education"],
+  "lang": "id",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512x512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Daftar Tryout",
+      "url": "/siswa/tryout",
+      "description": "Lihat tryout aktif"
+    },
+    {
+      "name": "Notifikasi",
+      "url": "/notifikasi",
+      "description": "Buka notifikasi"
+    }
+  ]
+}
