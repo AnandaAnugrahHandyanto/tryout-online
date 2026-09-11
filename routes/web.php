@@ -54,7 +54,10 @@ Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->name('siswa.')->grou
 });
 
 Route::middleware(['auth', 'role:orang_tua'])->prefix('orang-tua')->name('orang-tua.')->group(function () {
-    Route::get('/dashboard', fn() => view('orang-tua.dashboard'))->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\OrangTua\ParentController::class, 'dashboard'])->name('dashboard');
+    Route::get('/riwayat', [\App\Http\Controllers\OrangTua\ParentController::class, 'riwayat'])->name('riwayat');
+    Route::get('/analisis', [\App\Http\Controllers\OrangTua\ParentController::class, 'analisis'])->name('analisis');
+    Route::get('/ranking', [\App\Http\Controllers\OrangTua\ParentController::class, 'ranking'])->name('ranking');
 });
 
 require __DIR__.'/auth.php';
