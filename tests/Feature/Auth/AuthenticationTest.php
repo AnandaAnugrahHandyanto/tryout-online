@@ -24,10 +24,17 @@ class AuthenticationTest extends TestCase
         $response = $this->post('/login', [
             'email' => $user->email,
             'password' => 'password',
+            'role' => $user->role,
         ]);
 
         $this->assertAuthenticated();
-        $response->assertRedirect(route('dashboard', absolute: false));
+        $expected = match ($user->role) {
+            'admin' => route('admin.dashboard', absolute: false),
+            'guru' => route('guru.dashboard', absolute: false),
+            'orang_tua' => route('orang-tua.dashboard', absolute: false),
+            default => route('siswa.dashboard', absolute: false),
+        };
+        $response->assertRedirect($expected);
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
@@ -37,6 +44,7 @@ class AuthenticationTest extends TestCase
         $this->post('/login', [
             'email' => $user->email,
             'password' => 'wrong-password',
+            'role' => $user->role,
         ]);
 
         $this->assertGuest();
