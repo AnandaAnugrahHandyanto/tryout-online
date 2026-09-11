@@ -68,7 +68,7 @@
 
             <x-auth-session-status class="mt-4" :status="session('status')" />
 
-            <form method="POST" action="{{ route('login') }}" class="mt-6 space-y-4" x-data="{show:false}">
+            <form method="POST" action="/login" class="mt-6 space-y-4" x-data="{show:false}">
                 @csrf
 
                 {{-- Email --}}
