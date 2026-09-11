@@ -55,10 +55,22 @@ class TryoutController extends Controller {
             'nama'=>'required|string|max:150','mapel_id'=>'required|exists:mata_pelajaran,id',
             'durasi_menit'=>'required|integer|min:5|max:300','tanggal_mulai'=>'required|date','tanggal_selesai'=>'required|date|after:tanggal_mulai',
             'status'=>'required|in:draft,aktif,selesai','soal_ids'=>'nullable|array','soal_ids.*'=>'exists:soal,id']);
+        $wasActive = $tryout->status === 'aktif'; // ponytail: cek transisi draft→aktif untuk broadcast jadwal
         DB::transaction(function() use($d,$tryout){
             $tryout->update(['nama'=>$d['nama'],'mapel_id'=>$d['mapel_id'],'durasi_menit'=>$d['durasi_menit'],'tanggal_mulai'=>$d['tanggal_mulai'],'tanggal_selesai'=>$d['tanggal_selesai'],'status'=>$d['status'],'jumlah_soal'=>isset($d['soal_ids'])?count($d['soal_ids']):$tryout->jumlah_soal]);
             if(isset($d['soal_ids'])){ $tryout->soal()->detach(); foreach($d['soal_ids'] as $i=>$sid) $tryout->soal()->attach($sid,['urutan'=>$i+1]); }
         });
+        // broadcast jadwal saat draft/selesai → aktif (store sudah handle, update belum)
+        if(!$wasActive && $tryout->status === 'aktif'){
+            try{
+                $t2=$tryout->load('mapel');
+                foreach(Siswa::pluck('user_id') as $uid){
+                    // cegah duplikat: skip jika sudah ada notif jadwal untuk tryout ini
+                    $exists = Notifikasi::where('user_id',$uid)->where('tipe','jadwal')->where('judul','Tryout baru: '.$t2->nama)->exists();
+                    if(!$exists) Notifikasi::create(['user_id'=>$uid,'tipe'=>'jadwal','judul'=>'Tryout baru: '.$t2->nama,'pesan'=>'Tryout '.$t2->nama.' ('.($t2->mapel->nama??'-').') tersedia. Durasi '.$t2->durasi_menit.' menit. Kerjakan sebelum '.Carbon::parse($t2->tanggal_selesai)->format('d M H:i').'.']);
+                }
+            }catch(\Throwable $e){ \Log::warning('notif update draft→aktif gagal: '.$e->getMessage()); }
+        }
         return redirect()->route('guru.tryout.index')->with('success','Tryout diupdate.');
     }
     public function destroy(Tryout $tryout){ $this->own($tryout); $tryout->delete(); return redirect()->route('guru.tryout.index')->with('success','Tryout dihapus.'); }

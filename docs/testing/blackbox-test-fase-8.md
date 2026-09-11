@@ -86,7 +86,7 @@ Prasyarat: login guru, 5 soal tersedia (`id 1-5`).
 | 4.2 | Tryout | Draft tidak terlihat siswa; setelah aktif terlihat | — (siswa `GET /siswa/tryout`) sebelum & sesudah `PUT /guru/tryout/2 status=aktif` | Draft hidden, aktif visible | Siswa sebelum: `draft hidden PASS` · setelah `PUT aktif 302` siswa `aktif visible PASS` | PASS |
 | 4.3 | Tryout | Guru lihat hasil tryout | `GET /guru/tryout/2` | 200, tampil nama tryout + tabel hasil (avg/max/min) | `200` · body contains `Nilai`/`Siswa`/`Hasil` | PASS |
 
-> Catatan: `status=aktif` via `PUT` tidak mengirim notifikasi `jadwal` (hanya `POST /guru/tryout` dengan `status=aktif` yang broadcast). Ini by-design; lihat Bug Report #1.
+> Fix 8B: `PUT /guru/tryout/{id}` draft→aktif sekarang broadcast `jadwal` ke siswa (idempotent) — Bug #1 fixed.
 
 ---
 
@@ -168,7 +168,7 @@ Halaman `/notifikasi` dapat diakses semua role auth (admin/guru/siswa/orang_tua 
 
 | # | Ditemukan saat | Deskripsi | Severity | Status | Catatan |
 |---|---|---|---|---|---|
-| 1 | 4.2 | `PUT /guru/tryout/{id}` mengubah `draft` → `aktif` tidak mengirim notifikasi `jadwal` ke siswa | Low | Open — by design | Broadcast `jadwal` hanya di `TryoutController@store` jika `status=aktif`. Jika butuh, tambahkan broadcast di `update` saat `status` berubah `draft→aktif`. `ponytail:` tambah `if $tryout->wasChanged('status') && $tryout->status==='aktif'` lalu loop `Siswa::pluck('user_id')`. |
+| 1 | 4.2 | `PUT /guru/tryout/{id}` mengubah `draft` → `aktif` tidak mengirim notifikasi `jadwal` ke siswa | Low | **Fixed 8B** | `TryoutController@update` deteksi `!$wasActive && status==='aktif'` lalu broadcast `Siswa::pluck('user_id')` dengan dedup `where judul`. Retest: `TID=4 Tryout 8B DraftNotif` before 0 → after 2 notif, 2nd update tetap 2, siswa visible PASS. |
 | 2 | 9.3 | Search `?search=' OR ...` tidak di-escape manual tapi aman karena query pakai binding `where('nama','like',"%$s%")` via Eloquent | Info | Closed | Tetap aman; tidak perlu fix. |
 | 3 | — | `phpunit.xml` harus pakai MySQL `tryout_online_testing` karena VPS `php8.4` tanpa `pdo_sqlite` (wrapper `~/bin/php` tidak dipakai phpunit). Sudah di-fix di `f5fcd8d`. | Low | Closed | — |
 
