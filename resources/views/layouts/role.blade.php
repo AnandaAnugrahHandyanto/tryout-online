@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600|plus-jakarta-sans:600,700&display=swap" rel="stylesheet" />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('scripts')
 </head>
 <body class="font-sans antialiased bg-[#F8FAFC]">
 <div class="flex min-h-screen">
@@ -29,6 +30,11 @@
                         {{ $item['label'] }}
                     </a>
                 @endforeach
+                @php $nUnread = \App\Models\Notifikasi::where('user_id', auth()->id())->where('sudah_dibaca', false)->count(); $nActive = request()->routeIs('notifikasi.*'); @endphp
+                <a href="{{ route('notifikasi.index') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-[13px] transition {{ $nActive ? 'bg-white text-[#1E3A8A] font-semibold' : 'text-white/80 hover:bg-white/10 hover:text-white' }}">
+                    <span class="w-2 h-2 rounded-full {{ $nActive ? 'bg-[#1E3A8A]' : 'bg-white/50' }}"></span>
+                    Notifikasi @if($nUnread>0)<span class="ml-auto bg-[#EF4444] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">{{ $nUnread }}</span>@endif
+                </a>
             </nav>
         </div>
         <div class="p-4 border-t border-white/10">

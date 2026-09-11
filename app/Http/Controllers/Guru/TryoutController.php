@@ -1,7 +1,8 @@
 <?php
 namespace App\Http\Controllers\Guru;
 use App\Http\Controllers\Controller;
-use App\Models\Tryout; use App\Models\Soal; use App\Models\MataPelajaran; use App\Models\Guru; use App\Models\HasilTryout;
+use App\Models\Tryout; use App\Models\Soal; use App\Models\MataPelajaran; use App\Models\Guru; use App\Models\HasilTryout; use App\Models\Notifikasi; use App\Models\Siswa;
+use Carbon\Carbon;
 use Illuminate\Http\Request; use Illuminate\Support\Facades\DB;
 class TryoutController extends Controller {
     private function guruId(){ $u=auth()->user(); return optional($u->guru)->id ?? Guru::where('user_id',$u->id)->value('id'); }
@@ -35,6 +36,16 @@ class TryoutController extends Controller {
             foreach($soalIds as $i=>$sid) $t->soal()->attach($sid,['urutan'=>$i+1]);
             return $t;
         });
+        // notifikasi ke siswa kalau aktif: jadwal tryout baru
+        if($tryout->status==='aktif'){
+            try{
+                $t2=$tryout->load('mapel');
+                $siswaUserIds=\App\Models\Siswa::pluck('user_id');
+                foreach($siswaUserIds as $uid){
+                    \App\Models\Notifikasi::create(['user_id'=>$uid,'tipe'=>'jadwal','judul'=>'Tryout baru: '.$t2->nama,'pesan'=>'Tryout '.$t2->nama.' ('.($t2->mapel->nama??'-').') tersedia. Durasi '.$t2->durasi_menit.' menit. Kerjakan sebelum '.Carbon::parse($t2->tanggal_selesai)->format('d M H:i').'.']);
+                }
+            }catch(\Throwable $e){ \Log::warning('notif siswa tryout baru gagal: '.$e->getMessage()); }
+        }
         return redirect()->route('guru.tryout.index')->with('success','Tryout dibuat ('.count($soalIds).' soal).');
     }
     public function edit(Tryout $tryout){ $this->own($tryout); return view('guru.tryout.form', ['tryout'=>$tryout->load('soal'),'mapel'=>MataPelajaran::all(),'soal'=>Soal::where('guru_id',$this->guruId())->with('mapel')->get()]); }

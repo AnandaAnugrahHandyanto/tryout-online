@@ -157,6 +157,50 @@ class TryoutController extends Controller
         return $this->doSubmit($tryout, $hasil);
     }
 
+    private function notifyOrangTua(Tryout $tryout, HasilTryout $hasil, Siswa $siswa)
+    {
+        $ortu = $siswa->orangTua;
+        if (!$ortu || !$ortu->user_id) return;
+        $tryout->loadMissing('mapel');
+        // notif nilai (selalu)
+        \App\Models\Notifikasi::create([
+            'user_id' => $ortu->user_id,
+            'tipe' => 'nilai',
+            'judul' => 'Nilai tryout anak Anda: ' . (int)$hasil->nilai,
+            'pesan' => $siswa->user->name . ' menyelesaikan ' . $tryout->nama . ' (' . ($tryout->mapel->nama ?? '-') . ') dengan nilai ' . $hasil->nilai . ' (' . $hasil->jumlah_benar . ' benar, ' . $hasil->jumlah_salah . ' salah).',
+        ]);
+        // bandingkan dengan tryout sebelumnya
+        $prev = HasilTryout::where('siswa_id', $siswa->id)->whereNotNull('waktu_submit')->where('id', '!=', $hasil->id)->latest('waktu_submit')->first();
+        if ($prev) {
+            $delta = (float)$hasil->nilai - (float)$prev->nilai;
+            if ($delta <= -10) {
+                \App\Models\Notifikasi::create([
+                    'user_id' => $ortu->user_id,
+                    'tipe' => 'peringatan',
+                    'judul' => 'Peringatan: nilai turun ' . abs(round($delta,1)) . ' poin',
+                    'pesan' => $siswa->user->name . ' turun dari ' . $prev->nilai . ' ke ' . $hasil->nilai . ' pada ' . $tryout->nama . '. Perlu perhatian.',
+                ]);
+            } elseif ($delta > 0) {
+                \App\Models\Notifikasi::create([
+                    'user_id' => $ortu->user_id,
+                    'tipe' => 'pencapaian',
+                    'judul' => 'Pencapaian: nilai naik +' . round($delta,1),
+                    'pesan' => $siswa->user->name . ' meningkat dari ' . $prev->nilai . ' ke ' . $hasil->nilai . ' pada ' . $tryout->nama . '. Pertahankan!',
+                ]);
+            }
+        } else {
+            // pencapaian pertama jika nilai bagus
+            if ((float)$hasil->nilai >= 80) {
+                \App\Models\Notifikasi::create([
+                    'user_id' => $ortu->user_id,
+                    'tipe' => 'pencapaian',
+                    'judul' => 'Pencapaian awal: ' . (int)$hasil->nilai,
+                    'pesan' => $siswa->user->name . ' mendapat nilai ' . $hasil->nilai . ' di tryout pertama ' . $tryout->nama . '.',
+                ]);
+            }
+        }
+    }
+
     private function doSubmit(Tryout $tryout, HasilTryout $hasil)
     {
         $details = DetailJawaban::with('soal')->where('hasil_tryout_id', $hasil->id)->get();
@@ -184,6 +228,14 @@ class TryoutController extends Controller
             'waktu_pengerjaan_menit' => $menit,
             'waktu_submit' => now(),
         ]);
+        // notifikasi ke orang tua (auto)
+        try {
+            $siswa = $hasil->siswa()->with('user','orangTua')->first() ?? $this->siswa();
+            $this->notifyOrangTua($tryout, $hasil, $siswa);
+        } catch (\Throwable $e) {
+            // jangan gagalkan submit karena notif
+            \Log::warning('notif ortu gagal: '.$e->getMessage());
+        }
         if (request()->expectsJson()) {
             return response()->json(['redirect' => route('siswa.tryout.hasil', $tryout)]);
         }

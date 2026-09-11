@@ -23,6 +23,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/notifikasi', [\App\Http\Controllers\NotifikasiController::class, 'index'])->name('notifikasi.index');
+    Route::post('/notifikasi/{notifikasi}/read', [\App\Http\Controllers\NotifikasiController::class, 'markRead'])->name('notifikasi.read');
+    Route::post('/notifikasi/read-all', [\App\Http\Controllers\NotifikasiController::class, 'markAllRead'])->name('notifikasi.readAll');
 });
 
 // Role dashboards
@@ -37,6 +40,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(function () {
     Route::get('/dashboard', fn() => view('guru.dashboard'))->name('dashboard');
+    Route::get('/analitik', [\App\Http\Controllers\Guru\AnalitikController::class, 'index'])->name('analitik');
     Route::resource('soal', \App\Http\Controllers\Guru\SoalController::class)->except(['show']);
     Route::resource('tryout', \App\Http\Controllers\Guru\TryoutController::class);
 });
