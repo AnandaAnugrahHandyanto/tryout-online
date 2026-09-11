@@ -28,6 +28,11 @@ Route::middleware('auth')->group(function () {
 // Role dashboards
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', fn() => view('admin.dashboard'))->name('dashboard');
+    Route::resource('kelas', \App\Http\Controllers\Admin\KelasController::class)->except(['show']);
+    Route::resource('mapel', \App\Http\Controllers\Admin\MataPelajaranController::class)->parameters(['mapel'=>'mapel'])->except(['show']);
+    Route::resource('guru', \App\Http\Controllers\Admin\GuruController::class)->except(['show']);
+    Route::resource('siswa', \App\Http\Controllers\Admin\SiswaController::class)->except(['show']);
+    Route::resource('ortu', \App\Http\Controllers\Admin\OrangTuaController::class)->except(['show']);
 });
 
 Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(function () {
