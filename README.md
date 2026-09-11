@@ -1,66 +1,109 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# AkademikPro — Sistem Akademik Tryout Online + Parent Monitoring
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Sistem tryout online terintegrasi dengan dashboard monitoring orang tua real-time. 4 role: **Admin**, **Guru**, **Siswa**, **Orang Tua**. Responsive 390px, PWA installable, notifikasi otomatis.
 
-## About Laravel
+> Figma: https://www.figma.com/design/RtAPoCo6CYjIXV5T6p4dmJ/Sistem-Akademik-Tryout-Online---Parent-Monitoring-Dashboard
+> Stack: Laravel 11 + MySQL + Tailwind + Vite + Chart.js
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fitur
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+| Role | Fitur |
+|------|-------|
+| **Admin** | CRUD Kelas, Mapel, Guru, Siswa, Orang Tua · Dashboard KPI |
+| **Guru** | Bank Soal (CRUD + filter tingkat) · Tryout (manual / random acak) · Analitik per kelas & distribusi nilai · Detail hasil siswa |
+| **Siswa** | Daftar tryout aktif · Exam timer server + autosave (keepalive 30s) + ragu · Submit & scoring · Hasil + ranking |
+| **Orang Tua** | Dashboard KPI (nilai terakhir, ranking, progress, jumlah) · Chart 5 tryout terakhir · Progress per mapel · Perlu Perhatian · Riwayat · Analisis (Tinggi/Sedang/Perlu + rekomendasi) · Ranking Top 20 · Multi-anak selector |
+| **Semua** | Notifikasi (jadwal / nilai / peringatan drop >10% / pencapaian) · Filter + mark read · PWA (manifest + SW) · Bell header + bottom nav mobile |
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Design System
 
-## Learning Laravel
+- Navy `#1E3A8A` / Blue `#3B82F6` / Soft `#DBEAFE` / Surface `#F8FAFC` / Border `#E2E8F0` / Text `#0F172A` / Muted `#64748B`
+- Success `#22C55E` Warning `#F59E0B` Danger `#EF4444`
+- Font heading: **Plus Jakarta Sans**, body: **Inter** (bunny.net)
+- Radius 8/12/16, shadow-sm
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Demo Accounts
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Password semua: `password`
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+| Role | Email | Catatan |
+|------|-------|---------|
+| Admin | `admin@tryout.test` | |
+| Guru | `guru@tryout.test` | NIP 198001012000011001 |
+| Siswa | `siswa@tryout.test` | Kayla Putri · NIS 20250001 · Kelas 9A |
+| Siswa 2 | `kayla.adik@tryout.test` | Kayla Adik · NIS 20250002 · Kelas 9A |
+| Orang Tua | `orangtua@tryout.test` | Orang Tua Kayla (2 anak) |
 
-## Laravel Sponsors
+## Quick Start
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+git clone <repo>
+cd tryout-online
+cp .env.example .env
+php artisan key:generate
 
-### Premium Partners
+# MySQL (edit .env: DB_DATABASE=tryout_online DB_USERNAME=root DB_PASSWORD=***)
+mysql -u root -p -e "CREATE DATABASE tryout_online;"
+php artisan migrate --seed
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+npm install
+npm run build   # atau npm run dev
+php artisan serve --host=127.0.0.1 --port=8001
+```
 
-## Contributing
+Buka http://127.0.0.1:8001 — Welcome → Login → pilih Role.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+> VPS note: PHP 8.4. Jika `pdo_sqlite` tidak ada, project tetap jalan di MySQL. Wrapper `~/bin/php` hanya untuk migrate local SQLite.
 
-## Code of Conduct
+## Struktur
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```
+app/Http/Controllers/
+  Admin/   Kelas, MataPelajaran, Guru, Siswa, OrangTua
+  Guru/    Soal, Tryout, Analitik
+  Siswa/   Tryout (index/start/exam/save/ragu/submit/hasil/ranking)
+  OrangTua/ Parent (dashboard/riwayat/analisis/ranking)
+  Notifikasi, Auth/*
+resources/views/
+  welcome.blade.php          # landing
+  auth/login.blade.php       # split 50/50 navy
+  layouts/role.blade.php     # sidebar 240 + drawer + bell + bottom nav + PWA
+  admin/*  guru/*  siswa/*  orang-tua/*  notifikasi/*
+public/
+  manifest.json  sw.js  icons/*  build/*
+```
 
-## Security Vulnerabilities
+## PWA
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- `public/manifest.json` — name AkademikPro, display standalone, theme `#1E3A8A`
+- `public/sw.js` — CACHE `akademikpro-v1`, stale-while-revalidate + network-first
+- Icons 192/512 + maskable + 180 apple
+- Test: Chrome → Install app (desktop) atau Add to Home Screen (Android). Lighthouse PWA ≥ 90.
 
-## License
+## Testing
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Lihat `docs/TEST_REPORT.md` — 13 TC + 10 edge case, semua PASS (2026-09-11).
+
+```bash
+# cek route
+php artisan route:list
+# cek PWA
+curl -s http://127.0.0.1:8001/manifest.json | python3 -m json.tool
+curl -s http://127.0.0.1:8001/sw.js | head
+```
+
+## FASE
+
+- Fase 0: Setup + schema (14 migrasi, 12 model)
+- Fase 1: Auth + role middleware (403) + redirect per role
+- Fase 2: Master CRUD admin
+- Fase 3: Bank soal + tryout guru
+- Fase 4: Tryout engine siswa (server timer abs, autosave, scoring)
+- Fase 5: Parent monitoring + Chart.js
+- Fase 6: Notifikasi + analitik guru
+- Fase 7: PWA + responsive polish
+- Fase 8: Testing + docs + tag v1.0.0
+
+## Lisensi
+
+MIT. Template Laravel 11.
