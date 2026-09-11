@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Design tokens — Sistem Akademik Tryout Online */
+:root{
+  --navy:#1E3A8A;
+  --blue:#3B82F6;
+  --soft:#DBEAFE;
+  --surface:#F8FAFC;
+  --border:#E2E8F0;
+  --ink:#0F172A;
+  --muted:#64748B;
+  --success:#22C55E;
+  --warning:#F59E0B;
+  --danger:#EF4444;
+  --radius-sm:8px;
+  --radius:12px;
+  --radius-lg:16px;
+}
+.font-heading{ font-family: 'Plus Jakarta Sans', Inter, ui-sans-serif, system-ui, sans-serif; }

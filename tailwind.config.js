@@ -8,14 +8,27 @@ export default {
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
     ],
-
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                heading: ['Plus Jakarta Sans', 'Inter', ...defaultTheme.fontFamily.sans],
+            },
+            colors: {
+                navy: { DEFAULT: '#1E3A8A', light: '#3B82F6', soft: '#DBEAFE' },
+                surface: '#F8FAFC',
+                border: '#E2E8F0',
+                ink: '#0F172A',
+                muted: '#64748B',
+                success: '#22C55E',
+                warning: '#F59E0B',
+                danger: '#EF4444',
+            },
+            borderRadius: {
+                'card': '12px',
+                'card-lg': '16px',
             },
         },
     },
-
     plugins: [forms],
 };
