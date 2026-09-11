@@ -37,6 +37,8 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
 Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(function () {
     Route::get('/dashboard', fn() => view('guru.dashboard'))->name('dashboard');
+    Route::resource('soal', \App\Http\Controllers\Guru\SoalController::class)->except(['show']);
+    Route::resource('tryout', \App\Http\Controllers\Guru\TryoutController::class);
 });
 
 Route::middleware(['auth', 'role:siswa'])->prefix('siswa')->name('siswa.')->group(function () {
