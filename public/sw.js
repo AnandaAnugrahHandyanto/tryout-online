@@ -29,12 +29,14 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const request = event.request;
 
+    // Jangan pernah intercept POST/PUT/PATCH/DELETE.
     if (request.method !== 'GET') {
         return;
     }
 
     const url = new URL(request.url);
 
+    // Jangan cache halaman Laravel/authenticated pages.
     if (
         url.pathname === '/' ||
         url.pathname === '/login' ||
@@ -49,6 +51,7 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
+    // Hanya cache asset statis.
     if (
         url.pathname.startsWith('/build/') ||
         url.pathname.startsWith('/icons/') ||
