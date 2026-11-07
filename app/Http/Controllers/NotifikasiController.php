@@ -10,12 +10,15 @@ class NotifikasiController extends Controller
     public function index(Request $r)
     {
         $user = auth()->user();
-        $q = Notifikasi::where('user_id', $user->id)->latest();
-        if ($r->tipe && $r->tipe !== 'semua') {
-            $q->where('tipe', $r->tipe);
+
+        $baseQuery = Notifikasi::where('user_id', $user->id);
+        if ($r->input('tipe') && $r->input('tipe') !== 'semua') {
+            $baseQuery->where('tipe', $r->input('tipe'));
         }
-        $notif = $q->paginate(20)->withQueryString();
-        // counts for tabs
+
+        // Highlight only the most recent (or selected one) notification
+        $notif = $baseQuery->orderBy('created_at', 'desc')->limit(1)->first();
+
         $counts = [
             'semua' => Notifikasi::where('user_id', $user->id)->count(),
             'nilai' => Notifikasi::where('user_id', $user->id)->where('tipe', 'nilai')->count(),
@@ -23,6 +26,7 @@ class NotifikasiController extends Controller
             'pencapaian' => Notifikasi::where('user_id', $user->id)->where('tipe', 'pencapaian')->count(),
         ];
         $counts['peringatan'] = Notifikasi::where('user_id', $user->id)->where('tipe', 'peringatan')->count();
+
         return view('notifikasi.index', compact('notif', 'counts'));
     }
 
