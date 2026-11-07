@@ -64,7 +64,7 @@
             </div>
 
             <h2 class="font-heading font-bold text-xl text-[#0F172A]">Masuk ke Akun</h2>
-            <p class="text-sm text-[#64748B] mt-1.5">Masuk sebagai orang tua, siswa, atau guru</p>
+            <p class="text-sm text-[#64748B] mt-1.5">Akun Anda sudah terotentikasi otomatis berdasarkan email &amp; password.</p>
 
             <x-auth-session-status class="mt-4" :status="session('status')" />
 
@@ -98,20 +98,6 @@
                         </button>
                     </div>
                     <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                </div>
-
-                {{-- Role --}}
-                <div>
-                    <label for="role" class="block text-sm font-medium text-[#0F172A]">Masuk sebagai</label>
-                    <select id="role" name="role" required
-                        class="mt-1.5 block w-full rounded-xl border-[#E2E8F0] bg-white px-4 py-2.5 text-sm text-[#0F172A] focus:border-[#1E3A8A] focus:ring-[#1E3A8A]">
-                        <option value="" disabled {{ old('role') ? '' : 'selected' }}>-- Pilih Role --</option>
-                        <option value="admin" {{ old('role')=='admin' ? 'selected' : '' }}>Admin</option>
-                        <option value="guru" {{ old('role')=='guru' ? 'selected' : '' }}>Guru</option>
-                        <option value="siswa" {{ old('role')=='siswa' ? 'selected' : '' }}>Siswa</option>
-                        <option value="orang_tua" {{ old('role')=='orang_tua' ? 'selected' : '' }}>Orang Tua</option>
-                    </select>
-                    <x-input-error :messages="$errors->get('role')" class="mt-2" />
                 </div>
 
                 <label class="flex items-center gap-2 cursor-pointer select-none">
